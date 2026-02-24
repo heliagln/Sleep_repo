@@ -1,0 +1,10 @@
+age_category,max_total_score,n_indicators,n_rows
+newborns,4.0,2,2
+infants,4.0,3,3
+toddlers,7.0,5,5
+pre_schoolers,9.0,6,6
+school_aged_children,10.0,6,6
+teens,10.0,6,6
+young_adults,9.0,6,6
+adults,11.0,6,6
+older_adults,9.0,6,6

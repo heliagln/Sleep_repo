@@ -33,7 +33,8 @@ def computes_indicators(sleep_data: pd.DataFrame, reco_age: pd.DataFrame) -> int
             indicator_score = sleep_data[sleep_data["type"] == "awake"]["durationInMs"].sum() / total_time * 100
             indicators[row["indicator"]] = indicator_score
         else:
-            indicators[row["indicator"]] = total_time / (1000 * 60 * 60) # in hours
+            sleep_time = sleep_data[sleep_data["type"] != "awake"]["durationInMs"].sum() # in ms
+            indicators[row["indicator"]] = sleep_time / (1000 * 60 * 60) # in hours
     return indicators
 
 def compute_score_for_row(row: pd.Series, values: dict):
@@ -72,12 +73,40 @@ def compute_sleep_score(reco_age: pd.DataFrame, indicators: dict) -> int:
     for _, row in reco_age.iterrows():
         indicator = row["indicator"]
         indicator_score = indicators[indicator]
-        print(f"Computing score for indicator: {indicator} with value {indicator_score}")
         score, max_score = compute_score_for_row(row, indicator_score)
-        print(f"Score for indicator {indicator}: {score}")
         result += score
         total += max_score
     return result / total * 100 if total > 0 else 0
+
+def sleep_score_value(sleep_path: str, age: int, age_csv: str = "age.csv", recommendation_csv: str = "reco_sleep_quality.csv") -> int:
+    # Load the age file
+    age_data = pd.read_csv(age_csv)
+
+    # Load the sleep recommendation file
+    recommendation_data = pd.read_csv(recommendation_csv)
+
+    # Load the sleep data from a CSV file
+    with open(sleep_path, "r", encoding="utf-8", errors="replace") as f:
+        lines = f.readlines()
+
+    sep_idx = next(i for i, l in enumerate(lines) if l.strip() == "")
+
+    # Le tableau commence juste après
+    sleep_data = pd.read_csv(sleep_path, skiprows=sep_idx + 1)
+
+    # Extract the category of age of the subject from the age data
+    age_category = extract_category(age, age_data)
+
+    # Extract the recommendation based on the age category
+    reco_age = recommendation_data[recommendation_data["age_category"] == age_category]
+
+    # Calculate the sleep score based on the provided data
+    indicators = computes_indicators(sleep_data, reco_age)
+
+    # Compute the sleep score based on the indicators score
+    sleep_score_value = compute_sleep_score(reco_age, indicators)
+
+    return int(sleep_score_value)
 
 if __name__ == "__main__":
 
@@ -109,7 +138,7 @@ if __name__ == "__main__":
         help="Path to the sleep recommendation CSV file.",
     )
     args = parser.parse_args()
-
+    '''
     # Load age
     age = args.age
     
@@ -147,4 +176,6 @@ if __name__ == "__main__":
     sleep_score = compute_sleep_score(reco_age, indicators)
 
     # Print the sleep score
-    print(f"Your sleep score is: {sleep_score}")
+    print(f"Your sleep score is: {sleep_score}")'''
+    sleep_score_value = sleep_score_value(args.sleep_csv, args.age, args.age_csv, args.recommendation_csv)
+    print(f"Your sleep score is: {sleep_score_value}")

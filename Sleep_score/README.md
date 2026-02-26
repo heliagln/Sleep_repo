@@ -3,9 +3,13 @@
 Contient les fichiers pour calculer le score du sommeil.
 
 Les fichiers de ce dossier sont:
-- **sleep_score.py**: Ce fichier sert à calculer directement le score de sommeil à partir d'un fichier Garmin des épisodes du sommeil et de l'âge du patient. Il suffit de faire la commande suivante.
+- **sleep_score.py**: Ce fichier sert à calculer directement le score de sommeil à partir d'un fichier Garmin des épisodes du sommeil et de l'âge du patient. Il suffit de faire la commande suivante:
 ```
 bash <(python3 sleep_score.py path/to/sleep/csv -age 22)
+```
+- **sleep_score_all.py**: Ce fichier sert à calculer directement les scores journaliers de tous les fichiers Garmin des épisodes du sommeil et de l'âge du patient. Il suffit de faire la commande suivante:
+```
+bash <(python3 sleep_score_all.py path/to/sleep/folder/csv -age 22)
 ```
 - **age.csv**: csv avec les catégories de tranches d'âge et les bornes supérieures (strictes) associées à ces tranches d'âges. Les bornes sont en années.
 - **reco_sleep_quality.csv**: csv regroupant toutes les recommendations. Toutes ces recommendations proviennent du papier suivant:
